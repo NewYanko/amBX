@@ -17,4 +17,5 @@ export const Lights = {
   WallLeft: 0x2b,
   WallCenter: 0x3b,
   WallRight: 0x4b,
+  All: 0xff,
 };
