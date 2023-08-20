@@ -30,3 +30,39 @@ SET_LIGHT_COLOR = 0x03
 # 0xGG = Green color
 # 0xBB = Blue color
 SET_TIMED_COLOR_SEQUENCE = 0x72
+
+
+
+-----------------------
+
+
+def _init_hw(self):
+        self._log.debug("Opening device")
+        self._dev = self._devptr.open()
+        self._log.debug("Claiming interface 0")
+        self._dev.claimInterface(0)
+        self._log.debug("Initialisation succesful")
+
+    def write(self, data, timeout=TIMEOUT_LIBUSBW):
+        '''Write command data to device'''
+        return self._dev.interruptWrite(EP_OUT, data, timeout)
+
+    def set_color_rgb8(self, light, color):
+        '''Set light color'''
+        self.write(B([PKT_HEADER, light, SET_LIGHT_COLOR, color[0], color[1], color[2]]))
+        
+    def set_color_float(self, light, color):
+        self.set_color_rgb8(light, float_to_rgb8(color))
+
+    def set_sequence_rgb8(self, light, millis, colors):
+        '''Set light color sequence'''
+        assert(millis >= 0 and millis <= 0xffff)
+        assert(len(colors) == 16) # must be 16 colors
+        pkt = [PKT_HEADER, light, SET_TIMED_COLOR_SEQUENCE, millis >> 8, millis & 255]
+        for color in colors:
+            assert(len(color) == 3)
+            pkt.extend(color)
+        self.write(B(pkt))
+        
+    def set_sequence_float(self, light, millis, colors):
+        self.set_sequence_rgb8(light, millis, [float_to_rgb8(color) for color in colors])

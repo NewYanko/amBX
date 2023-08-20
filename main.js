@@ -1,18 +1,23 @@
 import { WebUSB } from "usb";
-import Util from "./Util.js";
+import HID from "node-hid";
+import { USB } from "./Util.js";
+import AMBX from "./classes/AMBX.js";
 
-async function CreateDevice(
-  vendorId = Util.DEFAULT_VID,
-  productId = Util.DEFAULT_PID
-) {
+async function CreateDevice(vendorId = USB.VID, productId = USB.PID) {
   const USB = new WebUSB();
 
   const device = await USB.requestDevice({
     filters: [{ vendorId, productId }],
   });
-  console.log(device);
+
+  if (!device) throw new Error("No USB device found");
+
+  return new AMBX(device);
 }
 
-CreateDevice(1);
+(async () => {
+  var Device = await CreateDevice();
+  Device.Open();
+})();
 
 export { CreateDevice };
