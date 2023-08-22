@@ -1,8 +1,8 @@
-import { Device } from "usb";
-import { Commands, Lights, USB } from "../Util.js";
+import { Device } from 'usb';
+import { Commands, Lights, USB } from '../Util.js';
 
-const ArrayLights = Object.keys(Lights).map((l) => Lights[l]);
-const RealArrayLights = ArrayLights.filter((l) => l != Lights.All);
+const ArrayLights = Object.keys(Lights).map(l => Lights[l]);
+const RealArrayLights = ArrayLights.filter(l => l != Lights.All);
 
 export default class AMBX {
   /**
@@ -19,18 +19,15 @@ export default class AMBX {
   }
 
   async Write(Light, Data = []) {
-    return new Promise((res) => {
-      this.Endpoint.makeTransfer(0, () => res()).submit(
-        Buffer.from([Commands.Header, Light, ...Data])
-      );
+    return new Promise(res => {
+      this.Endpoint.makeTransfer(0, () => res()).submit(Buffer.from([Commands.Header, Light, ...Data]));
     });
   }
 
   async SetColor(SelLights = Lights.All, Red, Green, Blue) {
     if (!Array.isArray(SelLights))
-      if (ArrayLights.includes(SelLights))
-        SelLights = SelLights == Lights.All ? RealArrayLights : [SelLights];
-      else throw new Error("Invalid light");
+      if (ArrayLights.includes(SelLights)) SelLights = SelLights == Lights.All ? RealArrayLights : [SelLights];
+      else throw new Error('Invalid light');
 
     for (const Light of SelLights) {
       //console.log("Setting light", Light, "[", Red, Green, Blue, "]");

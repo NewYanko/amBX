@@ -1,15 +1,16 @@
-import { findByIds } from "usb";
-import { Lights, USB } from "./Util.js";
-import AMBX from "./classes/AMBX.js";
+import { findByIds } from 'usb';
+import { Lights, USB } from './Util.js';
+import AMBX from './classes/AMBX.js';
 
 async function CreateDevice(vendorId = USB.VID, productId = USB.PID) {
   const device = findByIds(vendorId, productId);
 
-  if (!device) throw new Error("No USB device found");
+  if (!device) throw new Error('No USB device found');
 
   return new AMBX(device);
 }
 
+/*
 (async () => {
   var Device = await CreateDevice();
   var values = [0, 10, 20, 30, 40];
@@ -26,6 +27,7 @@ async function CreateDevice(vendorId = USB.VID, productId = USB.PID) {
   };
   setInterval(loop, 50);
   loop();
-})();
+})();*/
 
 export { CreateDevice };
+export * from './Util.js';
